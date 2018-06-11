@@ -191,25 +191,47 @@ phone. If no one is available, any house plant will do.
 * In industry terms, how many months does it take for the number of transistors
   on a chip to double?
 
+  Moore's law dictates every 18 months.
+
 * Why are registers necessary? Why not use RAM?
+
+registers are much faster than RAM.
 
 * Why is cache useful?
 
+It's a buffer between the slow RAM and the CPU, not as fast as registers but much larger.
+
 * Why are interrupts useful?
+
+So your computer doesn't get hung forever in a loop or so that you can cancel some code midway through.
 
 * What are some examples of interrupts that might occur?
 
+If you have a higher priority task than it is currently working on.
+
 * Describe what a CPU word is.
+
+1 instruction.
 
 * Describe what the system bus is and what size it is.
 
+It's the size of the data throughput that one clock cycle can process, 32 or 64 bit are common now.
+
 * Describe what a CPU instruction is.
+
+Code to tell the CPU to execute a given task.
 
 * Describe what the CPU clock represents.
 
+1 step for the CPU, the time for it to complete 1 cycle.
+
 * Describe what a CPU interrupt is.
 
+A way to transition your CPU from it's current work to another instruction.
+
 * Describe what kinds of pins enter and exit the CPU.
+
+Contacts to the motherboard, LGA or PGA - CPU side or motherboard side.
 
 * Describe what DMA is.
 
@@ -217,16 +239,38 @@ phone. If no one is available, any house plant will do.
 
 * Say which peripherals are connected to the I/O bus.
 
+Mouse, keyboard.
+
 * Describe what L1, L2, and L3 caches are.
+
+All do the same job of being pre-RAM storage, L1 being the fastest, L3 being the slowest. 
+They get bigger, cheaper, and slower as you move down the numbers.
 
 * Describe caching and storage from L1 through cloud storage.
 
+L cache is the fastest after registers, but also most expensive and takes up die space.
+Then you get to RAM which is slower but *much* more plentiful. - This step and below are volatile and lose memory on power loss.
+At this point you reach Solid State storage or Hard drives - much slower than RAM but still local and as such faster than cloud storage.
+Cloud Storage is for longer term storage of things you don't want to lose if your computer were to fail
+or that you want to use between multiple machines and have access to anywhere. However it would be the slowest because it's stored on a remote server.
+
 * Describe what RAM is and its reponsibility in the system.
+
+RAM is a cache between SSD or HDD and the L Caches
 
 * Describe what the hard disk is and its responsibility in the system.
 
+Longer term storage, things you want to retain when your program stops working or you restart your computer.
+Also much larger storage than anything before it in the chain.
+
 * Describe what the network interface card is responsible for in the system.
+
+Connecting your computer to a LAN or WAN - Local connection to other devices or internet connection.
 
 * Describe what the graphics card is responsible for in the system.
 
+Rendering graphics or massively parallel work.
+
 * Suggest the role that graphics cards play in machine learning.
+
+That would fit into the massively parallel work where graphics cards have thousands of cores and each can simulate a "neuron" in machine learning.
