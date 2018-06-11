@@ -57,6 +57,10 @@ class CPU {
         // !!! IMPLEMENT ME
         regA = regA * regB;
         break;
+      case "HLT":
+        stopClock();
+        break;
+      case "":
     }
   }
 
@@ -89,7 +93,20 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    this.alu(IR, operandA, operandB);
+    let IRConverted;
+    switch (IR.toString(2)) {
+      case "10011001":
+        IRConverted = "LDI";
+        break;
+      case "10101010":
+        IRConverted = "MUL";
+        break;
+      case "01000011":
+        IRConverted = "PRN";
+        break;
+    }
+
+    this.alu(IRConverted, operandA, operandB);
 
     // Increment the PC register to go to the next instruction. Instructions
     // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
@@ -102,7 +119,7 @@ class CPU {
       .toString(2)
       .substring(0, 1);
     if (inc === "01") this.PC++;
-    else if (inc === "02") this.PC += 2;
+    else if (inc === "10") this.PC += 2;
     else this.PC += 3;
   }
 }
