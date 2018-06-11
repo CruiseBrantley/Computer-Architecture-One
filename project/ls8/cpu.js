@@ -53,14 +53,18 @@ class CPU {
    */
   alu(op, regA, regB) {
     switch (op) {
+      case "LDI":
+        regA, regB;
+        break;
       case "MUL":
-        // !!! IMPLEMENT ME
         regA = regA * regB;
         break;
       case "HLT":
-        stopClock();
+        this.stopClock();
         break;
-      case "":
+      case "PRN":
+        console.log(regA);
+        break;
     }
   }
 
@@ -75,7 +79,7 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    let IR = this.ram.read(this.PC);
+    const IR = this.ram.read(this.PC);
 
     // Debugging output
     console.log(`${this.PC}: ${IR.toString(2)}`);
@@ -85,8 +89,8 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    let operandA = this.ram.read(this.PC + 1);
-    let operandB = this.ram.read(this.PC + 2);
+    const operandA = this.ram.read(this.PC + 1);
+    const operandB = this.ram.read(this.PC + 2);
 
     // Execute the instruction. Perform the actions for the instruction as
     // outlined in the LS-8 spec.
@@ -104,6 +108,8 @@ class CPU {
       case "01000011":
         IRConverted = "PRN";
         break;
+      default:
+        IRConverted = "HLT";
     }
 
     this.alu(IRConverted, operandA, operandB);
