@@ -15,8 +15,6 @@ const argv = process.argv;
 
 const filename = argv[2];
 
-console.log(filename);
-
 const filedata = fs.readFileSync(filename, "utf8");
 
 const lines = filedata.trim().split(/[\r\n]+/g);
