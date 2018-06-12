@@ -30,14 +30,21 @@ class CPU {
       case "10011001":
         IR = "LDI";
         break;
-      case "10101010":
-        IR = "MUL";
-        break;
       case "01000011":
         IR = "PRN";
         break;
-      case "00000001":
-        IR = "HLT";
+      case "10101010":
+        IR = "MUL";
+        break;
+      case "10101011":
+        IR = "DIV";
+        break;
+      case "10101000":
+        IR = "ADD";
+        break;
+      case "10101001":
+        IR = "SUB";
+        break;
       default:
         IR = "HLT";
     }
@@ -72,17 +79,17 @@ class CPU {
    */
   alu(op, regA, regB) {
     switch (op) {
-      case "LDI":
-        this.reg[regA] = regB;
-        break;
       case "MUL":
-        this.reg[regA] = this.reg[regA] * this.reg[regB];
+        this.reg[regA] = this.reg[regB] * this.reg[regA];
         break;
-      case "HLT":
-        this.stopClock();
+      case "DIV":
+        this.reg[regA] = this.reg[regB] / this.reg[regA];
         break;
-      case "PRN":
-        console.log(this.reg[regA]);
+      case "ADD":
+        this.reg[regA] = this.reg[regB] + this.reg[regA];
+        break;
+      case "SUB":
+        this.reg[regA] = this.reg[regB] - this.reg[regA];
         break;
     }
   }
@@ -118,7 +125,33 @@ class CPU {
 
     let IRConverted = this.convertInstruction(IR);
 
-    this.alu(IRConverted, operandA, operandB);
+    const decode = (op, regA, regB) => {
+      switch (op) {
+        case "LDI":
+          this.reg[regA] = regB;
+          break;
+        case "MUL":
+          this.alu(IRConverted, operandA, operandB);
+          break;
+        case "DIV":
+          this.alu(IRConverted, operandA, operandB);
+          break;
+        case "ADD":
+          this.alu(IRConverted, operandA, operandB);
+          break;
+        case "SUB":
+          this.alu(IRConverted, operandA, operandB);
+          break;
+        case "HLT":
+          this.stopClock();
+          break;
+        case "PRN":
+          console.log(this.reg[regA]);
+          break;
+      }
+    };
+
+    decode(IRConverted, operandA, operandB);
 
     // Increment the PC register to go to the next instruction. Instructions
     // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
