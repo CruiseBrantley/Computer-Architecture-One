@@ -73,18 +73,16 @@ class CPU {
   alu(op, regA, regB) {
     switch (op) {
       case "LDI":
-        this.poke(regA, regB);
+        this.reg[regA] = regB;
         break;
       case "MUL":
-        let valueA = this.ram.read(regA);
-        let valueB = this.ram.read(regB);
-        this.poke(regA, valueA * valueB);
+        this.reg[regA] = this.reg[regA] * this.reg[regB];
         break;
       case "HLT":
         this.stopClock();
         break;
       case "PRN":
-        console.log(this.ram.read(regA));
+        console.log(this.reg[regA]);
         break;
     }
   }
