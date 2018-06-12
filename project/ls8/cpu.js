@@ -85,7 +85,7 @@ class CPU {
     const IR = this.ram.read(this.PC);
 
     // Debugging output
-    console.log(`${this.PC}: ${IR.toString(2)}`);
+    console.log(`${this.PC}: ${IR.toString(2).padStart(8, 0)}`);
 
     // Get the two bytes in memory _after_ the PC in case the instruction
     // needs them.
@@ -101,17 +101,17 @@ class CPU {
     // !!! IMPLEMENT ME
 
     let IRConverted;
-    switch (IR.toString(2)) {
+    switch (IR.toString(2).padStart(8, 0)) {
       case "10011001":
         IRConverted = "LDI";
         break;
       case "10101010":
         IRConverted = "MUL";
         break;
-      case "1000011":
+      case "01000011":
         IRConverted = "PRN";
         break;
-      case "1":
+      case "00000001":
         IRConverted = "HLT";
       default:
         IRConverted = "HLT";
@@ -126,11 +126,13 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    let inc = "00000000" + Number(IR).toString(2);
-    inc = inc.substr(inc.length - 8);
-    if (inc === "01") this.PC++;
-    else if (inc === "10") this.PC += 2;
-    else this.PC += 3;
+    let inc = Number(IR)
+      .toString(2)
+      .padStart(8, 0)
+      .substr(0, 2);
+    if (inc === "01") this.PC += 2;
+    else if (inc === "10") this.PC += 3;
+    else this.PC++;
   }
 }
 
