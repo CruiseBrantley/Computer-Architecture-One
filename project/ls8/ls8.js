@@ -11,24 +11,29 @@ const fs = require("fs");
 //node ls8.js ./data/mult.ls8
 //run with above
 
-const argv = process.argv;
+const args = process.argv;
 
-const filename = argv[2];
-
-const filedata = fs.readFileSync(filename, "utf8");
-
-const lines = filedata.trim().split(/[\r\n]+/g);
+if (args.length != 3) {
+  if (args.length === 2)
+    console.error(" Missing argument: \n\n     provide a file to run");
+  if (args.length > 3)
+    console.error(" Too many arguments: \n\n     can only handle one file");
+  process.exit();
+}
 
 function loadMemory() {
   // Hardcoded program to print the number 8 on the console
+  try {
+    const regexp = /[0-9]{8}/gi;
+    const program = fs.readFileSync(`${args[2]}`, "utf-8").match(regexp);
 
-  const program = [];
-
-  lines.forEach(e => program.push(e));
-
-  // Load the program into the CPU's memory a byte at a time
-  for (let i = 0; i < program.length; i++) {
-    cpu.poke(i, parseInt(program[i], 2));
+    //Load the program into the CPU's memory a byte at a time
+    for (let i = 0; i < program.length; i++) {
+      cpu.poke(i, parseInt(program[i], 2));
+    }
+  } catch (err) {
+    console.log("invalid file, try again");
+    process.exit();
   }
 }
 
