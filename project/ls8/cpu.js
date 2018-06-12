@@ -25,6 +25,25 @@ class CPU {
     this.ram.write(address, value);
   }
 
+  convertInstruction(IR) {
+    switch (IR.toString(2).padStart(8, 0)) {
+      case "10011001":
+        IR = "LDI";
+        break;
+      case "10101010":
+        IR = "MUL";
+        break;
+      case "01000011":
+        IR = "PRN";
+        break;
+      case "00000001":
+        IR = "HLT";
+      default:
+        IR = "HLT";
+    }
+    return IR;
+  }
+
   /**
    * Starts the clock ticking on the CPU
    */
@@ -57,10 +76,9 @@ class CPU {
         this.poke(regA, regB);
         break;
       case "MUL":
-        regA = this.ram.read(regA);
-        regB = this.ram.read(regB);
-        let result = regA * regB;
-        this.poke(regA, result);
+        let valueA = this.ram.read(regA);
+        let valueB = this.ram.read(regB);
+        this.poke(regA, valueA * valueB);
         break;
       case "HLT":
         this.stopClock();
@@ -85,7 +103,7 @@ class CPU {
     const IR = this.ram.read(this.PC);
 
     // Debugging output
-    console.log(`${this.PC}: ${IR.toString(2).padStart(8, 0)}`);
+    //console.log(`${this.PC}: ${IR.toString(2).padStart(8, 0)}`);
 
     // Get the two bytes in memory _after_ the PC in case the instruction
     // needs them.
@@ -100,22 +118,7 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    let IRConverted;
-    switch (IR.toString(2).padStart(8, 0)) {
-      case "10011001":
-        IRConverted = "LDI";
-        break;
-      case "10101010":
-        IRConverted = "MUL";
-        break;
-      case "01000011":
-        IRConverted = "PRN";
-        break;
-      case "00000001":
-        IRConverted = "HLT";
-      default:
-        IRConverted = "HLT";
-    }
+    let IRConverted = this.convertInstruction(IR);
 
     this.alu(IRConverted, operandA, operandB);
 
