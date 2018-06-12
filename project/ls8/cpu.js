@@ -54,16 +54,19 @@ class CPU {
   alu(op, regA, regB) {
     switch (op) {
       case "LDI":
-        regA, regB;
+        this.poke(regA, regB);
         break;
       case "MUL":
-        regA = regA * regB;
+        regA = this.ram.read(regA);
+        regB = this.ram.read(regB);
+        let result = regA * regB;
+        this.poke(regA, result);
         break;
       case "HLT":
         this.stopClock();
         break;
       case "PRN":
-        console.log(regA);
+        console.log(this.ram.read(regA));
         break;
     }
   }
@@ -105,9 +108,11 @@ class CPU {
       case "10101010":
         IRConverted = "MUL";
         break;
-      case "01000011":
+      case "1000011":
         IRConverted = "PRN";
         break;
+      case "1":
+        IRConverted = "HLT";
       default:
         IRConverted = "HLT";
     }
@@ -121,9 +126,8 @@ class CPU {
 
     // !!! IMPLEMENT ME
 
-    let inc = Number(IR)
-      .toString(2)
-      .substring(0, 1);
+    let inc = "00000000" + Number(IR).toString(2);
+    inc = inc.substr(inc.length - 8);
     if (inc === "01") this.PC++;
     else if (inc === "10") this.PC += 2;
     else this.PC += 3;
