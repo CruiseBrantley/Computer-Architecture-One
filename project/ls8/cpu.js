@@ -27,11 +27,17 @@ class CPU {
 
   convertInstruction(IR) {
     switch (IR.toString(2).padStart(8, 0)) {
+      case "10011000":
+        IR = "LD";
+        break;
       case "10011001":
         IR = "LDI";
         break;
       case "01000011":
         IR = "PRN";
+        break;
+      case "10101100":
+        IR = "MOD";
         break;
       case "10101010":
         IR = "MUL";
@@ -51,6 +57,38 @@ class CPU {
     return IR;
   }
 
+  performInstruction(op, regA, regB) {
+    switch (op) {
+      case "LD":
+        this.reg[regA] = this.reg[regB];
+        break;
+      case "LDI":
+        this.reg[regA] = regB;
+        break;
+      case "MUL":
+        this.alu(op, regA, regB);
+        break;
+      case "DIV":
+        this.alu(op, regA, regB);
+        break;
+      case "ADD":
+        this.alu(op, regA, regB);
+        break;
+      case "SUB":
+        this.alu(op, regA, regB);
+        break;
+      case "MOD":
+        this.alu(op, regA, regB);
+        break;
+      case "HLT":
+        this.stopClock();
+        break;
+      case "PRN":
+        console.log(this.reg[regA]);
+        break;
+    }
+  }
+
   /**
    * Starts the clock ticking on the CPU
    */
@@ -67,22 +105,23 @@ class CPU {
     clearInterval(this.clock);
   }
 
-  /**
-   * ALU functionality
-   *
-   * The ALU is responsible for math and comparisons.
-   *
-   * If you have an instruction that does math, i.e. MUL, the CPU would hand
-   * it off to it's internal ALU component to do the actual work.
-   *
-   * op can be: ADD SUB MUL DIV INC DEC CMP
-   */
   alu(op, regA, regB) {
     switch (op) {
+      case "MOD":
+        if (this.reg[regB] === 0) {
+          console.log("Can't MOD by 0");
+          stopClock();
+        }
+        this.reg[regA] = this.reg[regB] % this.reg[regA];
+        break;
       case "MUL":
         this.reg[regA] = this.reg[regB] * this.reg[regA];
         break;
       case "DIV":
+        if (this.reg[regB] === 0) {
+          console.log("Can't DIV by 0");
+          stopClock();
+        }
         this.reg[regA] = this.reg[regB] / this.reg[regA];
         break;
       case "ADD":
@@ -98,67 +137,14 @@ class CPU {
    * Advances the CPU one cycle
    */
   tick() {
-    // Load the instruction register (IR--can just be a local variable here)
-    // from the memory address pointed to by the PC. (I.e. the PC holds the
-    // index into memory of the instruction that's about to be executed
-    // right now.)
-
-    // !!! IMPLEMENT ME
-
     const IR = this.ram.read(this.PC);
-
-    // Debugging output
-    //console.log(`${this.PC}: ${IR.toString(2).padStart(8, 0)}`);
-
-    // Get the two bytes in memory _after_ the PC in case the instruction
-    // needs them.
-
-    // !!! IMPLEMENT ME
 
     const operandA = this.ram.read(this.PC + 1);
     const operandB = this.ram.read(this.PC + 2);
 
-    // Execute the instruction. Perform the actions for the instruction as
-    // outlined in the LS-8 spec.
-
-    // !!! IMPLEMENT ME
-
     let IRConverted = this.convertInstruction(IR);
 
-    const decode = (op, regA, regB) => {
-      switch (op) {
-        case "LDI":
-          this.reg[regA] = regB;
-          break;
-        case "MUL":
-          this.alu(IRConverted, operandA, operandB);
-          break;
-        case "DIV":
-          this.alu(IRConverted, operandA, operandB);
-          break;
-        case "ADD":
-          this.alu(IRConverted, operandA, operandB);
-          break;
-        case "SUB":
-          this.alu(IRConverted, operandA, operandB);
-          break;
-        case "HLT":
-          this.stopClock();
-          break;
-        case "PRN":
-          console.log(this.reg[regA]);
-          break;
-      }
-    };
-
-    decode(IRConverted, operandA, operandB);
-
-    // Increment the PC register to go to the next instruction. Instructions
-    // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
-    // instruction byte tells you how many bytes follow the instruction byte
-    // for any particular instruction.
-
-    // !!! IMPLEMENT ME
+    this.performInstruction(IRConverted, operandA, operandB);
 
     let inc = Number(IR)
       .toString(2)
