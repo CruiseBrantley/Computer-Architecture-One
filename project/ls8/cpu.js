@@ -2,6 +2,16 @@
  * LS-8 v2.0 emulator skeleton code
  */
 
+const LD = 0b10011000;
+const LDI = 0b10011001;
+const PRN = 0b01000011;
+const MOD = 0b10101100;
+const MUL = 0b10101010;
+const DIV = 0b10101011;
+const ADD = 0b10101000;
+const SUB = 0b10101001;
+const HLT = 0b00000001;
+
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -25,67 +35,37 @@ class CPU {
     this.ram.write(address, value);
   }
 
-  convertInstruction(IR) {
-    switch (IR.toString(2).padStart(8, 0)) {
-      case "10011000":
-        IR = "LD";
-        break;
-      case "10011001":
-        IR = "LDI";
-        break;
-      case "01000011":
-        IR = "PRN";
-        break;
-      case "10101100":
-        IR = "MOD";
-        break;
-      case "10101010":
-        IR = "MUL";
-        break;
-      case "10101011":
-        IR = "DIV";
-        break;
-      case "10101000":
-        IR = "ADD";
-        break;
-      case "10101001":
-        IR = "SUB";
-        break;
-      default:
-        IR = "HLT";
-    }
-    return IR;
-  }
-
   performInstruction(op, regA, regB) {
     switch (op) {
-      case "LD":
+      case LD:
         this.reg[regA] = this.reg[regB];
         break;
-      case "LDI":
+      case LDI:
         this.reg[regA] = regB;
         break;
-      case "MUL":
+      case MUL:
         this.alu(op, regA, regB);
         break;
-      case "DIV":
+      case DIV:
         this.alu(op, regA, regB);
         break;
-      case "ADD":
+      case ADD:
         this.alu(op, regA, regB);
         break;
-      case "SUB":
+      case SUB:
         this.alu(op, regA, regB);
         break;
-      case "MOD":
+      case MOD:
         this.alu(op, regA, regB);
         break;
-      case "HLT":
+      case HLT:
         this.stopClock();
         break;
-      case "PRN":
+      case PRN:
         console.log(this.reg[regA]);
         break;
+      default:
+        console.log("Command not recognized", op.toString(2));
     }
   }
 
@@ -107,27 +87,27 @@ class CPU {
 
   alu(op, regA, regB) {
     switch (op) {
-      case "MOD":
+      case MOD:
         if (this.reg[regB] === 0) {
           console.log("Can't MOD by 0");
           stopClock();
         }
         this.reg[regA] = this.reg[regB] % this.reg[regA];
         break;
-      case "MUL":
+      case MUL:
         this.reg[regA] = this.reg[regB] * this.reg[regA];
         break;
-      case "DIV":
+      case DIV:
         if (this.reg[regB] === 0) {
           console.log("Can't DIV by 0");
           stopClock();
         }
         this.reg[regA] = this.reg[regB] / this.reg[regA];
         break;
-      case "ADD":
+      case ADD:
         this.reg[regA] = this.reg[regB] + this.reg[regA];
         break;
-      case "SUB":
+      case SUB:
         this.reg[regA] = this.reg[regB] - this.reg[regA];
         break;
     }
@@ -142,9 +122,7 @@ class CPU {
     const operandA = this.ram.read(this.PC + 1);
     const operandB = this.ram.read(this.PC + 2);
 
-    let IRConverted = this.convertInstruction(IR);
-
-    this.performInstruction(IRConverted, operandA, operandB);
+    this.performInstruction(IR, operandA, operandB);
 
     let inc = Number(IR)
       .toString(2)
