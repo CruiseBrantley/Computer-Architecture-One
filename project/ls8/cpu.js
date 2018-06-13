@@ -87,7 +87,7 @@ class CPU {
       case CALL:
         // console.log(this.reg);
         this.reg[7]--;
-        this.poke(this.reg[7], this.PC + 1);
+        this.poke(this.reg[7], this.PC + 2);
         // console.log("pushed:", this.PC + 1);
         this.PC = this.reg[regA];
         // console.log("PC set to:", this.PC);
@@ -158,14 +158,15 @@ class CPU {
 
     // console.log(IR.toString(2));
     this.performInstruction(IR, operandA, operandB);
-
-    let inc = Number(IR)
-      .toString(2)
-      .padStart(8, 0)
-      .substr(0, 2);
-    if (inc === "01") this.PC += 2;
-    else if (inc === "10") this.PC += 3;
-    else this.PC++;
+    if (IR != CALL && IR != RET) {
+      let inc = Number(IR)
+        .toString(2)
+        .padStart(8, 0)
+        .substr(0, 2);
+      if (inc === "01") this.PC += 2;
+      else if (inc === "10") this.PC += 3;
+      else this.PC++;
+    }
   }
 }
 
