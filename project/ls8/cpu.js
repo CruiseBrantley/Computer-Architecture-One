@@ -11,6 +11,8 @@ const DIV = 0b10101011;
 const ADD = 0b10101000;
 const SUB = 0b10101001;
 const HLT = 0b00000001;
+const PUSH = 0b01001101;
+const POP = 0b01001100;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -23,7 +25,7 @@ class CPU {
     this.ram = ram;
 
     this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
-
+    this.reg[7] = 0xf4;
     // Special-purpose registers
     this.PC = 0; // Program Counter
   }
@@ -63,6 +65,14 @@ class CPU {
         break;
       case PRN:
         console.log(this.reg[regA]);
+        break;
+      case PUSH:
+        this.reg[7]--;
+        this.poke(this.reg[7], this.reg[regA]);
+        break;
+      case POP:
+        this.reg[regA] = this.ram.read(this.reg[7]);
+        this.reg[7]++;
         break;
       default:
         console.log("Command not recognized", op.toString(2));
