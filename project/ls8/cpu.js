@@ -13,6 +13,8 @@ const SUB = 0b10101001;
 const HLT = 0b00000001;
 const PUSH = 0b01001101;
 const POP = 0b01001100;
+const CALL = 0b01001000;
+const RET = 0b00001001;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -35,6 +37,16 @@ class CPU {
    */
   poke(address, value) {
     this.ram.write(address, value);
+  }
+
+  push(address) {
+    this.reg[7]--;
+    this.poke(this.reg[7], this.reg[address]);
+  }
+
+  pop(address) {
+    this.reg[address] = this.ram.read(this.reg[7]);
+    this.reg[7]++;
   }
 
   performInstruction(op, regA, regB) {
@@ -67,15 +79,27 @@ class CPU {
         console.log(this.reg[regA]);
         break;
       case PUSH:
-        this.reg[7]--;
-        this.poke(this.reg[7], this.reg[regA]);
+        this.push(regA); //pushes register input to stack
         break;
       case POP:
-        this.reg[regA] = this.ram.read(this.reg[7]);
+        this.pop(regA); //receives to register input from stack
+        break;
+      case CALL:
+        // console.log(this.reg);
+        this.reg[7]--;
+        this.poke(this.reg[7], this.PC + 1);
+        // console.log("pushed:", this.PC + 1);
+        this.PC = this.reg[regA];
+        // console.log("PC set to:", this.PC);
+        break;
+      case RET:
+        this.PC = this.ram.read(this.reg[7]);
+        // console.log("popped:", this.PC);
         this.reg[7]++;
         break;
       default:
         console.log("Command not recognized", op.toString(2));
+        this.stopClock();
     }
   }
 
@@ -132,6 +156,7 @@ class CPU {
     const operandA = this.ram.read(this.PC + 1);
     const operandB = this.ram.read(this.PC + 2);
 
+    // console.log(IR.toString(2));
     this.performInstruction(IR, operandA, operandB);
 
     let inc = Number(IR)
