@@ -16,6 +16,11 @@ const POP = 0b01001100;
 const CALL = 0b01001000;
 const RET = 0b00001001;
 const JMP = 0b01010000;
+const CMP = 0b10100000;
+const JEQ = 0b01010001;
+const JGT = 0b01010100;
+const JLT = 0b01010011;
+const JNE = 0b01010010;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -31,6 +36,10 @@ class CPU {
     this.reg[7] = 0xf4;
     // Special-purpose registers
     this.PC = 0; // Program Counter
+    this.E = 0; // Equals Flag
+    this.L = 0; // Less than Flag
+    this.G = 0; // Greater than Flag
+
     this.nextIncFlag = true;
   }
 
@@ -75,6 +84,9 @@ class CPU {
       case MOD:
         this.alu(op, regA, regB);
         break;
+      case CMP:
+        this.alu(op, regA, regB);
+        break;
       case HLT:
         this.stopClock();
         break;
@@ -101,6 +113,27 @@ class CPU {
       case JMP:
         this.PC = this.reg[regA];
         this.nextIncFlag = false;
+        break;
+      case JEQ:
+        this.E
+          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
+          : null;
+        break;
+      case JNE:
+        !this.E
+          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
+          : null;
+        break;
+      case JGT:
+        this.G
+          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
+          : null;
+        break;
+      case JLT:
+        this.L
+          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
+          : null;
+        break;
       default:
         console.log("Command not recognized", op.toString(2));
         this.stopClock();
@@ -147,6 +180,11 @@ class CPU {
         break;
       case SUB:
         this.reg[regA] = this.reg[regB] - this.reg[regA];
+        break;
+      case CMP:
+        this.reg[regA] === this.reg[regB] ? (this.E = 1) : (this.E = 0);
+        this.reg[regA] < this.reg[regB] ? (this.L = 1) : (this.E = 0);
+        this.reg[regA] > this.reg[regB] ? (this.G = 1) : (this.G = 0);
         break;
     }
   }
