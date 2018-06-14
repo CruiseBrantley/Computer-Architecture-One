@@ -31,6 +31,7 @@ class CPU {
     this.reg[7] = 0xf4;
     // Special-purpose registers
     this.PC = 0; // Program Counter
+    this.nextIncFlag = true;
   }
 
   /**
@@ -51,6 +52,7 @@ class CPU {
   }
 
   performInstruction(op, regA, regB) {
+    this.nextIncFlag = true;
     switch (op) {
       case LD:
         this.reg[regA] = this.reg[regB];
@@ -86,20 +88,19 @@ class CPU {
         this.pop(regA); //receives to register input from stack
         break;
       case CALL:
-        // console.log(this.reg);
         this.reg[7]--;
         this.poke(this.reg[7], this.PC + 2);
-        // console.log("pushed:", this.PC + 1);
         this.PC = this.reg[regA];
-        // console.log("PC set to:", this.PC);
+        this.nextIncFlag = false;
         break;
       case RET:
         this.PC = this.ram.read(this.reg[7]);
-        // console.log("popped:", this.PC);
         this.reg[7]++;
+        this.nextIncFlag = false;
         break;
       case JMP:
         this.PC = this.reg[regA];
+        this.nextIncFlag = false;
       default:
         console.log("Command not recognized", op.toString(2));
         this.stopClock();
@@ -161,7 +162,7 @@ class CPU {
 
     // console.log(IR.toString(2));
     this.performInstruction(IR, operandA, operandB);
-    if (IR != CALL && IR != RET && IR != JMP) {
+    if (this.nextIncFlag) {
       let inc = Number(IR)
         .toString(2)
         .padStart(8, 0)
