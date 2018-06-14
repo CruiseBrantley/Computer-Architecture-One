@@ -15,6 +15,7 @@ const PUSH = 0b01001101;
 const POP = 0b01001100;
 const CALL = 0b01001000;
 const RET = 0b00001001;
+const JMP = 0b01010000;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -97,6 +98,8 @@ class CPU {
         // console.log("popped:", this.PC);
         this.reg[7]++;
         break;
+      case JMP:
+        this.PC = this.reg[regA];
       default:
         console.log("Command not recognized", op.toString(2));
         this.stopClock();
@@ -158,7 +161,7 @@ class CPU {
 
     // console.log(IR.toString(2));
     this.performInstruction(IR, operandA, operandB);
-    if (IR != CALL && IR != RET) {
+    if (IR != CALL && IR != RET && IR != JMP) {
       let inc = Number(IR)
         .toString(2)
         .padStart(8, 0)

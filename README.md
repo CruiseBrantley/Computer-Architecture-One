@@ -27,8 +27,8 @@
 
 # LS-8 Stack, Subroutines, Interrupts
 
-- [ ] Implement System Stack
-- [ ] Implement Subroutine Calls
+- [x] Implement System Stack
+- [x] Implement Subroutine Calls
 
 # Stretch
 
