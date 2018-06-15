@@ -24,6 +24,9 @@ const JEQ = 0b01010001;
 const JGT = 0b01010100;
 const JLT = 0b01010011;
 const JNE = 0b01010010;
+const lMask = 1 << 2;
+const gMask = 1 << 1;
+const eMask = 1 << 0;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -40,9 +43,7 @@ class CPU {
 
     // Special-purpose registers
     this.PC = 0; // Program Counter
-    this.E = 0; // Equals Flag
-    this.L = 0; // Less than Flag
-    this.G = 0; // Greater than Flag
+    this.FL = 0; // Flags
 
     this.nextIncFlag = true;
   }
@@ -98,7 +99,6 @@ class CPU {
         process.stdout.write(
           String.fromCharCode(this.ram.read(this.reg[regA]))
         );
-        //console.log(this.reg[regA]);
         break;
       case PUSH:
         this.push(regA); //pushes register input to stack
@@ -121,16 +121,16 @@ class CPU {
         this.jumpIfTrue(regA);
         break;
       case JEQ:
-        this.E ? this.jumpIfTrue(regA) : null;
+        (this.FL & eMask) != 0 ? this.jumpIfTrue(regA) : null;
         break;
       case JNE:
-        !this.E ? this.jumpIfTrue(regA) : null;
+        (this.FL & eMask) == 0 ? this.jumpIfTrue(regA) : null;
         break;
       case JGT:
-        this.G ? this.jumpIfTrue(regA) : null;
+        (this.FL & gMask) != 0 ? this.jumpIfTrue(regA) : null;
         break;
       case JLT:
-        this.L ? this.jumpIfTrue(regA) : null;
+        (this.FL & lMask) != 0 ? this.jumpIfTrue(regA) : null;
         break;
       default:
         console.log("Command not recognized", op.toString(2));
@@ -186,9 +186,15 @@ class CPU {
         this.reg[regA] = this.reg[regB] - this.reg[regA];
         break;
       case CMP:
-        this.reg[regA] == this.reg[regB] ? (this.E = 1) : (this.E = 0);
-        this.reg[regA] < this.reg[regB] ? (this.L = 1) : (this.L = 0);
-        this.reg[regA] > this.reg[regB] ? (this.G = 1) : (this.G = 0);
+        this.reg[regA] === this.reg[regB]
+          ? (this.FL |= eMask)
+          : (this.FL &= ~eMask);
+        this.reg[regA] < this.reg[regB]
+          ? (this.FL |= lMask)
+          : (this.FL &= ~lMask);
+        this.reg[regA] > this.reg[regB]
+          ? (this.FL |= gMask)
+          : (this.FL &= ~gMask);
         break;
     }
   }
