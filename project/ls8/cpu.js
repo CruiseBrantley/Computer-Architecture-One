@@ -64,6 +64,11 @@ class CPU {
     this.reg[7]++;
   }
 
+  jumpIfTrue(regA) {
+    this.PC = this.reg[regA];
+    this.nextIncFlag = false;
+  }
+
   performInstruction(op, regA, regB) {
     this.nextIncFlag = true;
     switch (op) {
@@ -111,28 +116,19 @@ class CPU {
         this.nextIncFlag = false;
         break;
       case JMP:
-        this.PC = this.reg[regA];
-        this.nextIncFlag = false;
+        this.jumpIfTrue(regA);
         break;
       case JEQ:
-        this.E
-          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
-          : null;
+        this.E ? this.jumpIfTrue(regA) : null;
         break;
       case JNE:
-        !this.E
-          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
-          : null;
+        !this.E ? this.jumpIfTrue(regA) : null;
         break;
       case JGT:
-        this.G
-          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
-          : null;
+        this.G ? this.jumpIfTrue(regA) : null;
         break;
       case JLT:
-        this.L
-          ? ((this.PC = this.reg[regA]), (this.nextIncFlag = false))
-          : null;
+        this.L ? this.jumpIfTrue(regA) : null;
         break;
       default:
         console.log("Command not recognized", op.toString(2));
