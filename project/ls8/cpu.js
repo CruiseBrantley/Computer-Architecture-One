@@ -57,11 +57,11 @@ class CPU {
 
   push(address) {
     this.reg[7]--;
-    this.poke(this.reg[7], this.reg[address]);
+    this.poke(this.reg[7], address);
   }
 
   pop(address) {
-    this.reg[address] = this.ram.read(this.reg[7]);
+    address = this.ram.read(this.reg[7]);
     this.reg[7]++;
   }
 
@@ -101,16 +101,14 @@ class CPU {
         );
         break;
       case PUSH:
-        this.push(regA); //pushes register input to stack
+        this.push(this.reg[regA]); //pushes register input to stack
         break;
       case POP:
-        this.pop(regA); //receives to register input from stack
+        this.pop(this.reg[regA]); //receives to register input from stack
         break;
       case CALL:
-        this.reg[7]--;
-        this.poke(this.reg[7], this.PC + 2);
-        this.PC = this.reg[regA];
-        this.nextIncFlag = false;
+        this.push(this.PC + 2);
+        this.jumpIfTrue(regA);
         break;
       case RET:
         this.PC = this.ram.read(this.reg[7]);
