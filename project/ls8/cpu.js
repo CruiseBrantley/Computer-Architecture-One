@@ -67,35 +67,21 @@ class CPU {
   performInstruction(op, regA, regB) {
     this.nextIncFlag = true;
     switch (op) {
+      case INC:
+      case DEC:
+      case MUL:
+      case DIV:
+      case ADD:
+      case SUB:
+      case MOD:
+      case CMP:
+        this.alu(op, regA, regB);
+        break;
       case LD:
         this.reg[regA] = this.reg[regB];
         break;
       case LDI:
         this.reg[regA] = regB;
-        break;
-      case INC:
-        this.alu(op, regA, regB);
-        break;
-      case DEC:
-        this.alu(op, regA, regB);
-        break;
-      case MUL:
-        this.alu(op, regA, regB);
-        break;
-      case DIV:
-        this.alu(op, regA, regB);
-        break;
-      case ADD:
-        this.alu(op, regA, regB);
-        break;
-      case SUB:
-        this.alu(op, regA, regB);
-        break;
-      case MOD:
-        this.alu(op, regA, regB);
-        break;
-      case CMP:
-        this.alu(op, regA, regB);
         break;
       case HLT:
         this.stopClock();
