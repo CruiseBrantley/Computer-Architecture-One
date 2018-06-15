@@ -1,0 +1,4 @@
+LDI R0,5
+LD R2,R0
+PRN R2
+HLT

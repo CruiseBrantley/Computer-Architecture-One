@@ -5,6 +5,9 @@
 const LD = 0b10011000;
 const LDI = 0b10011001;
 const PRN = 0b01000011;
+const PRA = 0b01000010;
+const INC = 0b01111000;
+const DEC = 0b01111001;
 const MOD = 0b10101100;
 const MUL = 0b10101010;
 const DIV = 0b10101011;
@@ -34,6 +37,7 @@ class CPU {
 
     this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
     this.reg[7] = 0xf4;
+
     // Special-purpose registers
     this.PC = 0; // Program Counter
     this.E = 0; // Equals Flag
@@ -69,6 +73,12 @@ class CPU {
       case LDI:
         this.reg[regA] = regB;
         break;
+      case INC:
+        this.alu(op, regA, regB);
+        break;
+      case DEC:
+        this.alu(op, regA, regB);
+        break;
       case MUL:
         this.alu(op, regA, regB);
         break;
@@ -92,6 +102,10 @@ class CPU {
         break;
       case PRN:
         console.log(this.reg[regA]);
+        break;
+      case PRA:
+        console.log(String.fromCharCode(this.reg[regA]));
+        //console.log(this.reg[regA]);
         break;
       case PUSH:
         this.push(regA); //pushes register input to stack
@@ -158,6 +172,12 @@ class CPU {
 
   alu(op, regA, regB) {
     switch (op) {
+      case INC:
+        this.reg[regA]++;
+        break;
+      case DEC:
+        this.reg[regA]--;
+        break;
       case MOD:
         if (this.reg[regB] === 0) {
           console.log("Can't MOD by 0");
@@ -182,8 +202,8 @@ class CPU {
         this.reg[regA] = this.reg[regB] - this.reg[regA];
         break;
       case CMP:
-        this.reg[regA] === this.reg[regB] ? (this.E = 1) : (this.E = 0);
-        this.reg[regA] < this.reg[regB] ? (this.L = 1) : (this.E = 0);
+        this.reg[regA] == this.reg[regB] ? (this.E = 1) : (this.E = 0);
+        this.reg[regA] < this.reg[regB] ? (this.L = 1) : (this.L = 0);
         this.reg[regA] > this.reg[regB] ? (this.G = 1) : (this.G = 0);
         break;
     }
@@ -198,7 +218,7 @@ class CPU {
     const operandA = this.ram.read(this.PC + 1);
     const operandB = this.ram.read(this.PC + 2);
 
-    // console.log(IR.toString(2));
+    //console.log(IR.toString(2));
     this.performInstruction(IR, operandA, operandB);
     if (this.nextIncFlag) {
       let inc = Number(IR)
