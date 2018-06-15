@@ -121,16 +121,16 @@ class CPU {
         this.jumpIfTrue(regA);
         break;
       case JEQ:
-        (this.FL & eMask) != 0 ? this.jumpIfTrue(regA) : null;
+        (this.FL & eMask) === 1 ? this.jumpIfTrue(regA) : null;
         break;
       case JNE:
-        (this.FL & eMask) == 0 ? this.jumpIfTrue(regA) : null;
+        (this.FL & eMask) === 0 ? this.jumpIfTrue(regA) : null;
         break;
       case JGT:
-        (this.FL & gMask) != 0 ? this.jumpIfTrue(regA) : null;
+        (this.FL & gMask) === 1 ? this.jumpIfTrue(regA) : null;
         break;
       case JLT:
-        (this.FL & lMask) != 0 ? this.jumpIfTrue(regA) : null;
+        (this.FL & lMask) === 1 ? this.jumpIfTrue(regA) : null;
         break;
       default:
         console.log("Command not recognized", op.toString(2));
