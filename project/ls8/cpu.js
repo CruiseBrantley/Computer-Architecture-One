@@ -95,7 +95,9 @@ class CPU {
         console.log(this.reg[regA]);
         break;
       case PRA:
-        console.log(String.fromCharCode(this.reg[regA]));
+        process.stdout.write(
+          String.fromCharCode(this.ram.read(this.reg[regA]))
+        );
         //console.log(this.reg[regA]);
         break;
       case PUSH:
